@@ -10,66 +10,60 @@
 
 ---
 
-##  Demostración
+## 📺 Demostración
 
 Mira un gameplay:
 
 <p align="center">
-  <a href="https://youtu.be/FT3sdVFLXjE">
-    <img src="https://img.youtube.com/vi/FT3sdVFLXjE/0.jpg" alt="MazeOut Gameplay" width="600">
+  <a href="https://youtu.be/IIkuU5bcB3w">
+    <img src="https://img.youtube.com/vi/IIkuU5bcB3w/0.jpg" alt="MazeOut Gameplay" width="600">
   </a>
 </p>
 
 ---
 
-## Mecánicas y Características Principales
-
-Este proyecto implementa varias mecánicas complejas desarrolladas desde cero en C#:
+## 🕹️ Mecánicas y Características Principales
 
 ### 1. Sistema de Interacción (Pickup System)
-El jugador puede interactuar con el entorno usando un sistema basado en **Raycasting**:
-* **Detección Visual:** Los objetos interactuables cambian de color cuando el jugador los mira.
-* **Manipulación de Objetos:** Capacidad de agarrar, transportar y soltar objetos.
-* **Ajuste Dinámico:** Al agarrar un objeto, este ajusta su escala, desactiva sus físicas y se emparenta al jugador. Al soltarlo, recupera su tamaño, posición y físicas (inercia).
+El jugador interactúa con el entorno mediante un sistema basado en **Raycasting**:
+* **Detección Visual:** Los objetos cambian de color al ser detectados por el rayo central de la cámara.
+* **Manipulación Dinámica:** Al agarrar un objeto, se ajusta su escala, se desactiva su gravedad y se emparenta a la mano del jugador.
 
-### 2. Puzzles Físicos y Lógicos
-* **Botones de Presión:** Interruptores de suelo que detectan objetos específicos y reaccionan con animaciones de escalado y eventos.
-* **Empuje de Objetos:** Implementación de fuerza física en el controlador del personaje para poder empujar esferas pesadas, calculando vectores de dirección y masa.
-* **Materiales Físicos:** Uso de `Physic Materials` para crear superficies con rebote y fricción personalizada.
+### 2. Arquitectura de Sistemas (Managers)
+* **AudioManager (Singleton):** Sistema persistente que no se destruye entre escenas. Utiliza canales separados para efectos de sonido (`PlayOneShot`) y música de ambiente con soporte para detener y cambiar clips.
+* **ScenesManager:** Controlador centralizado para la navegación entre el menú principal y la escena de juego, asegurando que el flujo de tiempo se restablezca correctamente.
+* **LevelManager:** Actúa como el cerebro de la escena, gestionando el conteo de coleccionables, la apertura de puertas y los estados de victoria o pausa.
 
-### 3. Gestión del Nivel (Game Architecture)
-* **Level Manager Centralizado:** Un script maestro que controla el estado del juego.
-* **Sistema de Eventos:** Las puertas no "preguntan" si pueden abrirse; el Manager les envía la señal, optimizando el rendimiento.
-* **Checkpoint & Respawn:** * Sistema de **SpawnPoints** y **DeathZones**.
-    * Si un objeto clave cae al vacío, un script de seguridad (`ObjectRespawn`) lo devuelve a su posición original automáticamente.
+### 3. Gestión de Pantallas y UI
+* **Menú de Pausa:** Implementado mediante el `LevelManager`, permite congelar el tiempo (`Time.timeScale = 0`), liberar el cursor del mouse y ocultar el puntero de juego.
+* **Pantallas de Estado:** El juego gestiona dinámicamente pantallas de "You Win", menús de pausa y notificaciones de Checkpoint.
+* **Audio de Menú:** Uso de scripts dedicados para disparar música ambiental específica al cargar menús o escenas iniciales.
 
-### 4. UI y Feedback
-* Sistema de recolección de monedas con condiciones de victoria.
-* Pantalla de **"You Win"** animada con Sprites 2D integrados en el Canvas al completar los objetivos.
+### 4. Puzzles y Seguridad
+* **Botones Físicos:** Detectan objetos con el tag `Sphere` para activar eventos y reproducir sonidos a través del AudioManager.
+* **Sistema de Respawn:** Si un objeto clave o el jugador caen al vacío, son devueltos automáticamente a sus posiciones iniciales o al último checkpoint.
 
 ---
 
-## 🛠️ Detalle Técnico (Scripts)
-
-Breve descripción de la lógica implementada en los scripts principales:
+## 🛠️ Detalle Técnico (Scripts Principales)
 
 | Script | Descripción Técnica |
 | :--- | :--- |
-| `PickupSystem.cs` | Maneja Raycasts, `ViewportPointToRay`, Layers y manipulación de padres/hijos (`SetParent`). Integra el **New Input System**. |
-| `LevelManager.cs` | Actúa como el cerebro de la escena. Gestiona contadores y referencias a objetos dinámicos (Puertas). |
-| `Button.cs` | Detecta colisiones `OnTriggerEnter` filtrando por Tags específicos y modifica `Transform.localScale` para simular presión. |
-| `PushRigidBody.cs` | Utiliza `OnControllerColliderHit` para aplicar fuerza (`linearVelocity`) a objetos físicos al caminar contra ellos. |
-| `ObjectRespawn.cs` | Guarda `initialPosition` en el `Start` y resetea el objeto si toca un trigger de zona muerta. |
+| `AudioManager.cs` | Gestiona múltiples `AudioSource` para SFX y Ambience usando un patrón Singleton persistente. |
+| `ScenesManager.cs` | Orquestador de cambio de escenas y reseteo de la escala de tiempo (`Time.timeScale`). |
+| `LevelManager.cs` | Controla el flujo del nivel, el estado de pausa, coleccionables y la lógica de victoria. |
+| `PickupSystem.cs` | Maneja el agarre de objetos mediante Raycasts y manipulación de jerarquías de Transform. |
+| `Button.cs` | Detecta colisiones mediante `OnTriggerEnter` y activa la recolección de monedas. |
 
 ---
 
-## Controles
+## ⌨️ Controles
 
 | Acción | Input (Teclado/Mouse) |
 | :--- | :--- |
 | **Movimiento** | `W`, `A`, `S`, `D` |
-| **Cámara** | Mouse |
 | **Interactuar / Agarrar** | `Clic Izquierdo` |
+| **Pausar / Menú** | `P` |
 | **Saltar** | `Barra Espaciadora` |
 
 ---
@@ -84,8 +78,10 @@ Breve descripción de la lógica implementada en los scripts principales:
     * Abre **Unity Hub**.
     * Haz clic en "Add" y selecciona la carpeta clonada.
     * Versión recomendada: **Unity 2022.3 LTS** o superior.
+3.  **Configuración:**
+    * Asegúrate de añadir las escenas MainMenu y MainGame en las configuraciones de construcción (Build Settings) para que el ScenesManager funcione correctamente.
 3.  **Jugar:**
-    * Abre la escena `Level1` (o el nombre de tu escena) en la carpeta `Assets/Scenes`.
+    * Abre la escena `MainMenu` en la carpeta `Assets/Scenes`.
     * Dale al botón **Play**.
 
 ---
