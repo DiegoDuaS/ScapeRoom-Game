@@ -3,7 +3,9 @@ using UnityEngine;
 public class Button : MonoBehaviour
 {
     private LevelManager levelManager;
-    private bool isPressed = false; 
+    private bool isPressed = false;
+
+    [SerializeField] AudioClip buttonSound;
 
     void Start()
     {
@@ -20,7 +22,8 @@ public class Button : MonoBehaviour
 
             isPressed = true;
 
-            
+            AudioManager.Instance.PlaySFX(buttonSound);
+
             if (levelManager != null)
             {
                 Destroy(other.gameObject);

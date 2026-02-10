@@ -5,6 +5,8 @@ public class coin : MonoBehaviour
     private LevelManager levelManager;
     public float speed = 50f; 
 
+    [SerializeField] AudioClip coinSound;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,6 +23,7 @@ public class coin : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            AudioManager.Instance.PlaySFX(coinSound);
             levelManager.CoinCollect();
             Destroy(gameObject);
         }  

@@ -21,7 +21,10 @@ public class PickupSystem : MonoBehaviour
     private GameObject lastSeenObject;
     private Color originalColorObject;
     
-    private Vector3 originalScaleObject; 
+    private Vector3 originalScaleObject;
+
+    [Header("AUDIO")]
+    [SerializeField] AudioClip pickupClip;
 
     void Start()
     {
@@ -69,6 +72,7 @@ public class PickupSystem : MonoBehaviour
             rb.useGravity = false; 
         }
 
+        AudioManager.Instance.PlaySFX(pickupClip);
         // Se pega a la mano
         pickedObject.transform.SetParent(rightHand);
         pickedObject.transform.localPosition = Vector3.zero; 
